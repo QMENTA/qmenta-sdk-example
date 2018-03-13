@@ -1,0 +1,78 @@
+<html>
+<head>
+<meta name="pdfkit-page-size" content="Legal" />
+<meta name="pdfkit-orientation" content="Portrait" />
+<style type="text/css">
+
+.title_1 {
+	font-size: 18px;
+	font-weight: bold;
+	margin: 10px 0px;
+}
+
+.disclaimer {
+	font-size: 22px;
+	font-weight: bold;
+    position: absolute; 
+    top: 8px;
+    color: #AAAAAA;
+}
+
+.subject_data_container {
+	width: 100%;
+	border-top: solid 1px #999;
+	border-bottom: solid 1px #999;
+	padding: 10px 0px;
+	font-size: 16px;
+}
+
+.comment {
+	padding: 5px;
+	font-size: 12px;
+}
+
+.page_break {
+	page-break-before: always;
+}
+</style>
+</head>
+<body>
+	<div
+		style="width: 100%; font-size: 12px; text-align: right; padding: 5px">
+		Version {{data_report["version"]}}</div>
+	<table style='width: 100%; height: auto; margin: 20px 0px 40px 0px; '>
+		<tr>
+			<td rowspan="2"><img style='width: 360px; height: auto'
+				src="{{data_report['logo_main']}}" /></td>
+		</tr>
+		<tr>
+			<td style='text-align: right'>
+			    Carrer de Roger de Ll&uacute;ria 46, Pral. 1&ordf;<br />
+                08009 Barcelona<br />
+                Spain
+            </td>
+		</tr>
+	</table>
+	<div style="font-size: 12px; text-align: right; padding: 5px">Created:
+		{{data_report["this_moment"]}}</div>
+	<div class="title_1">Patient Information</div>
+
+	<div class="subject_data_container">
+		Subject ID: <b>{{data_report["ss"]}}</b>   |
+		Session ID: <b>{{data_report["ssid"]}}</b>
+	</div>
+
+	<div class="title_1">Analysis Results</div>
+
+	<div class="comment">Analysis Results</div>
+
+	<table style="width: 100%; margin-bottom: 20px">
+		<tr>
+			<td style="width: 75%; text-align: center">
+			    <img src="{{data_report['histogram']}}" style="width: 60%;" />
+			</td>
+		</tr>
+	</table>
+	<div class="disclaimer">This report is not meant for any clinical usage.</div>
+</body>
+</html>

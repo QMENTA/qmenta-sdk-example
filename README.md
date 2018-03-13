@@ -1,45 +1,53 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+**Clone this repository to adapt the Dockerfile and tool script and rapidly build [QMENTA tools](https://platform.qmenta.com/).**
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+> In order to add tools to the [QMENTA platform](https://platform.qmenta.com/) you need to have **developer privileges**. If you are interested in this feature, please contact us at info@qmenta.com.
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
+This repository contains a simple example. If you want to know more about how to use the SDK and all its features, take a look at the [documentation](https://docs.qmenta.com/sdk).
 
----
+# Contents
+## Dockerfile
 
-## Edit a file
+This file contains the sequence of instructions to build a new tool image. You can setup environment paths, run commands during the image building stage and copy files (see [Dockerfile commands](https://docs.docker.com/get-started/part2/)).
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
+## Tool script
 
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
+The main script that is executed when a tool is launched on the [QMENTA platform](https://platform.qmenta.com/). This script typically performs the actions shown below using the [QMENTA SDK](https://docs.qmenta.com/sdk) functions where suitable:
 
----
+1. Download the input data to the container.
+2. Process it (call any third party tool).
+3. Upload the results.
 
-## Create a file
+The naive example shown in this repository computes the histogram for a range of intensities in a T1-weighted image. The range of intensities can be specified from outside the tool thanks to the [tool settings specification](https://docs.qmenta.com/sdk/6_settings.html#).
 
-Next, you’ll add a new file to this repository.
+Feel free to contact us if you have any doubt or request at sdk@qmenta.com! We are happy to hear from you and expand the capabilities of the platform to fit new useful requirements.
 
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
+# Build the tool image
 
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
+Use [Docker](https://www.docker.com/get-docker) to build a new image using the Dockerfile:
+~~~~
+docker build -t image_name .
+~~~~
+Where `image_name` should conform to the syntax `my_username/my_tool:version`.
 
----
+> The first build may take several minutes since it will need to generate the image layer containing the software installation.
 
-## Clone a repository
+# Test the tool locally
 
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
+Optionally, the `test_tool.py` script can be used to locally launch your tool image if you specify the input files and the required values for you settings (see `mock_settings_values.json`):
+~~~~
+mkdir analysis_output
 
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
+python test_tool.py image_name example_data analysis_output \
+    -settings settings.json \
+    -values mock_settings_values.json
+~~~~
 
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+# Add the tool to the [QMENTA platform](https://platform.qmenta.com/)
+
+To add a tool image to your list of tools you will first need to login push it to your [Docker Hub](https://hub.docker.com/) registry:
+~~~~
+docker login
+
+docker push image_name
+~~~~
+To register the tool to the [QMENTA platform](https://platform.qmenta.com/), access the Analysis menu, and go to My Tools. You will need to enter your credentials of your registry, the name and a version number for the tool, its settings configuration file and a description. You can find an example of the settings configuration file in this repository (`settings.json`).

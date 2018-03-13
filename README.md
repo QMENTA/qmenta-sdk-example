@@ -1,4 +1,4 @@
-Clone this repository to adapt the Dockerfile and tool script and rapidly build [QMENTA tools](https://platform.qmenta.com/). It contains a complete tool example as an example. If you want to know more about how to use the SDK and all its features, take a look at the [documentation](https://docs.qmenta.com/sdk).
+Clone this repository to adapt the Dockerfile and tool script and rapidly build [QMENTA tools](https://platform.qmenta.com/). It contains a simple example with all the required files to build and test the tool. If you want to know more about how to use the SDK and all its features, take a look at the [documentation](https://docs.qmenta.com/sdk).
 
 > In order to add tools to the [QMENTA platform](https://platform.qmenta.com/) you need to have **developer privileges**. If you are interested in this feature, please contact us at info@qmenta.com.
 

@@ -4,12 +4,12 @@ Clone this repository to adapt the Dockerfile and tool script and rapidly build 
 
 > In order to add tools to the [QMENTA platform](https://platform.qmenta.com/) you need to have **developer privileges**. If you are interested in this feature, please contact us at info@qmenta.com.
 
-# Contents
-## Dockerfile
+## Contents
+### Dockerfile
 
 This file contains the sequence of instructions to build a new tool image. You can setup environment paths, run commands during the image building stage and copy files (see [Dockerfile commands](https://docs.docker.com/get-started/part2/)).
 
-## Tool script
+### Tool script
 
 The main script that is executed when a tool is launched on the [QMENTA platform](https://platform.qmenta.com/). This script typically performs the actions shown below using the [QMENTA SDK](https://docs.qmenta.com/sdk) functions where suitable:
 
@@ -21,7 +21,7 @@ The naive example shown in this repository computes the histogram for a range of
 
 Feel free to contact us if you have any doubt or request at sdk@qmenta.com! We are happy to hear from you and expand the capabilities of the platform to fit new useful requirements.
 
-# Build the tool image
+## Build the tool image
 
 Use [Docker](https://www.docker.com/get-docker) to build a new image using the Dockerfile:
 ~~~~
@@ -31,7 +31,7 @@ Where `image_name` should conform to the syntax `my_username/my_tool:version`.
 
 > The first build may take several minutes since it will need to generate the image layer containing the software installation.
 
-# Test the tool locally
+## Test the tool locally
 
 Optionally, the `test_tool.py` script can be used to locally launch your tool image if you specify the input files and the required values for you settings (see `mock_settings_values.json`):
 ~~~~
@@ -42,7 +42,7 @@ python test_tool.py image_name example_data analysis_output \
     -values mock_settings_values.json
 ~~~~
 
-# Add the tool to the [QMENTA platform](https://platform.qmenta.com/)
+## Add the tool to the [QMENTA platform](https://platform.qmenta.com/)
 
 To add a tool image to your list of tools you will first need to login push it to your [Docker Hub](https://hub.docker.com/) registry:
 ~~~~

@@ -21,6 +21,10 @@ The naive example shown in this repository computes the histogram for a range of
 
 Feel free to contact us if you have any doubt or request at sdk@qmenta.com! We are happy to hear from you and expand the capabilities of the platform to fit new useful requirements.
 
+### Report template
+
+This tool code uses this HTML template to populate some fields with the patient data and the analysis results to generate a PDF report.
+
 ## Build the tool image
 
 Use [Docker](https://www.docker.com/get-docker) to build a new image using the Dockerfile:

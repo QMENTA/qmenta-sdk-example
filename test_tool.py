@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 
+'''
+Basic QMENTA Tool Image Local Tester
+
+Usage:
+ $ ./test_sdk_tool.py image_name inputs/ outputs
+ $ ./test_sdk_tool.py image_name inputs/ outputs --settings settings.json --values values.json --tool package.tool -v /host/path:/container/path
+
+Compatible with Python 2 & 3 with no additional packages.
+See https://docs.qmenta.com/sdk/testing.html for more information.
+'''
+
 import argparse
 import random
 import os
@@ -19,6 +30,9 @@ def random_seq(n):
 
 
 def parse_arguments():
+    '''
+    Interface for script
+    '''
     parser = argparse.ArgumentParser(description='Local execution of a tool image test')
 
     # Positional arguments
@@ -27,26 +41,37 @@ def parse_arguments():
     parser.add_argument('outputs', help='A folder which will be used as output container')
 
     # Keyword arguments
-    parser.add_argument('-settings', help='The settings.json file')
-    parser.add_argument('-values', help='The values for the settings file')    
-    parser.add_argument('-tool', help='The python file with the run method')
+    parser.add_argument('-v', help='Mount a directory inside the Docker container', action='append')
+    parser.add_argument('--settings', help='The settings.json file')
+    parser.add_argument('--values', help='The values for the settings file')    
+    parser.add_argument('--tool', help='The python file with the run method')
 
     # Private testing arguments
-    parser.add_argument('-resources', help='argparse.SUPPRESS')
+    parser.add_argument('--resources', help='argparse.SUPPRESS')
 
     return parser.parse_args()
 
 
-def run_command(cmd, verbose = True):
+def run_command(cmd, verbose=True):
+    '''
+    Execute command in shell
+    '''
     if verbose:
-        print ' $ ' + ' '.join(cmd)
+        print(' '.join(cmd))
     subprocess.call(cmd)
 
 def error(msg):
-    print msg
+    '''
+    Exit with error
+    '''
+    print(msg)
     sys.exit(1)
 
 def main():
+    '''
+    Script entrypoint
+    '''
+
     args = parse_arguments()
 
     # Check input and output folders
@@ -55,7 +80,17 @@ def main():
     if not isdir(abspath(args.outputs)):
         error('Error: Output folder does not exist')
     if not os.listdir(abspath(args.outputs)) == []:
-        print('Warning: Output folder is not empty')
+        print('Warning: Output folder is not empty (files could be overwritten).')
+         # Post executions actions
+        yes = {'yes', 'y'}
+        no = {'no', 'n'}
+        choice = ''
+        while choice not in yes and choice not in no:
+            print("Do you want to continue? (Y/N)")
+            choice = raw_input().lower()
+        if choice in no:
+            sys.exit(1)            
+            
     if args.resources and not isdir(abspath(args.resources)):
         error('Error: Resources folder does not exist')
     if args.settings and not args.values:
@@ -68,6 +103,7 @@ def main():
     c_output_path = '/root/local_exec_output/'
     c_res_path = '/root/local_exec_resources/'
 
+    # If no tool_settings file is provided, use a generic one
     if not args.settings:
         settings_content = '''[
     {
@@ -87,8 +123,9 @@ def main():
 
         with open(args.settings, 'w') as settings_file:
             settings_file.write(settings_content)
-
-    if not args.values:  # If no settings_values file is avaiable, generate just the list of input files
+    
+    # If no tool_settings_values file is provided, generate just the list of input files
+    if not args.values:
         files = listdir(os.path.join(abspath(args.inputs), 'input'))
         values_content = '{"input":[\n' + ',\n'.join(
             ['   {"path": "' + f + '"}' for f in files if not isdir(f)]) + ']\n}'
@@ -100,21 +137,40 @@ def main():
 
     if not args.tool:
         args.tool = 'tool'
+    
+    # Extra directories to be mounted (for instance, live version of source code)
+    extra_volumes = []
+    for volume in (args.v or []):
+        extra_volumes += ['-v', volume]
 
     # Launch the detached container
     c_name = 'local_test_' + random_seq(5)
-    print '\nStarting container'
-    run_command(['docker', 'run', '-dit', '-v', abspath(args.outputs) + ':' + c_output_path, '--name=' + c_name, args.image, '/bin/bash'])
+    print('\nStarting container {}...'.format(c_name))
+    run_command([
+        'docker', 'run', '-dit',
+        '-v', abspath(args.inputs) + ':' + c_input_path,
+        '-v', abspath(args.outputs) + ':' + c_output_path] + extra_volumes + [
+        '--entrypoint=/bin/bash', 
+        '--name=' + c_name,
+        args.image,        
+    ])
 
-    # Copy the files to the container
-    run_command(['docker', 'cp', abspath(args.settings), c_name + ':' + c_settings_path], verbose = True)
-    run_command(['docker', 'cp', abspath(args.values), c_name + ':' + c_values_path], verbose = True)
-    run_command(['docker', 'cp', abspath(args.inputs), c_name + ':' + c_input_path], verbose = True)
+    # Copy the settings files to the container
+    run_command(['docker', 'cp', abspath(args.settings), c_name + ':' + c_settings_path], verbose = False)
+    run_command(['docker', 'cp', abspath(args.values), c_name + ':' + c_values_path], verbose = False)
+
+    # Changing to local executor
+    run_command([
+        'docker', 'exec', c_name,
+        '/bin/bash', '-c', r"sed -i.bak 's/\<qmenta.sdk\>/&.local/' /root/entrypoint.sh"
+    ], verbose=False)
 
     # Run the local executor
-    print '\nRunning tool...'
-    launch_cmd = ['docker', 'exec', c_name, '/usr/local/miniconda/bin/python', '-m', 'qmenta.sdk.local.executor',
-                 c_settings_path, c_values_path, c_input_path, c_output_path, '--tool-path', args.tool + ':run']
+    print('\nRunning {}.py:run()...\n'.format(args.tool))
+    launch_cmd = [
+        'docker', 'exec', c_name, '/bin/bash', 'entrypoint.sh',
+        c_settings_path, c_values_path, c_input_path, c_output_path, '--tool-path', args.tool + ':run'
+    ]
     
     # Additional resources (QMENTA)
     if args.resources:
@@ -128,24 +184,23 @@ def main():
     no = {'no', 'n'}
     choice = ''
     while choice not in yes and choice not in no:
-        print "Do you want to stop the analysis container? (Y/N)"
+        print("Do you want to stop the container? (Y/N)")
         choice = raw_input().lower()
     if choice in yes:
         run_command(['docker', 'stop', c_name])
 
         choice = ''
         while choice not in yes and choice not in no:
-            print "Do you want to delete the analysis container? (Y/N)"
+            print("Do you want to delete the container? (Y/N)")
             choice = raw_input().lower()
         if choice in yes:
             run_command(['docker', 'rm', c_name], verbose = True)
     else:
         choice = ''
         while choice not in yes and choice not in no:
-            print "Do you want to attach to the container? (Y/N)"
+            print("Do you want to attach to the container? (Y/N)")
             choice = raw_input().lower()
         if choice in yes:
-            print "Press [ENTER] to enter the container shell..."
             run_command(['docker', 'attach', c_name], verbose = True)
 
 

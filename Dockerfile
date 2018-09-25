@@ -3,7 +3,7 @@ FROM qmentasdk/minimal:latest
 
 # Install your software requirements and run other config commands (may take several minutes)
 RUN apt-get update -y && \
-    apt-get install -y mrtrix libfreetype6-dev libxft-dev wkhtmltopdf Xvfb && \
+    apt-get install -y mrtrix libfreetype6-dev libxft-dev wkhtmltopdf xvfb && \
     pip install matplotlib numpy pdfkit tornado
 
 # A virtual x framebuffer is required to generate PDF files with pdfkit

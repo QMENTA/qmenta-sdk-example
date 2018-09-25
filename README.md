@@ -35,6 +35,8 @@ Where `image_name` should conform to the syntax `my_username/my_tool:version`.
 
 > The first build may take several minutes since it will need to generate the image layer containing the software installation.
 
+Alternatively, take a look at the `standalone.Dockerfile` to see how to install the SDK in an image based on Ubuntu.
+
 ## Test the tool locally
 
 Optionally, the `test_tool.py` script can be used to locally launch your tool image if you specify the input files and the required values for you settings (see `mock_settings_values.json`):

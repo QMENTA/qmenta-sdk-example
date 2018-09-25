@@ -44,7 +44,7 @@ def run(context):
     ax.set_ylabel('Number of voxels')
     ax.grid(color='#CCCCCC', linestyle='--', linewidth=1)
 
-    left_i = (i for i,v in enumerate(bins_centers) if v > hist_start).next()
+    left_i = next(i for i,v in enumerate(bins_centers) if v > hist_start)
     right_i = max((i for i,v in enumerate(bins_centers) if v < hist_end))
 
     plt.plot(bins_centers[left_i:right_i], values[left_i:right_i])
@@ -69,6 +69,9 @@ def run(context):
 
     loader = template.Loader('/root/')
     report_contents = loader.load('report_template.html').generate(data_report=data_report)
+
+    if isinstance(report_contents, bytes):
+        report_contents = report_contents.decode("utf-8")
     pdfkit.from_string(report_contents, report_path)
 
     # Upload the data and the report

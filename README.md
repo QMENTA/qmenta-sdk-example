@@ -32,7 +32,9 @@ Use [Docker](https://www.docker.com/get-docker) to build a new image using the D
 docker build -t image_name .
 ~~~~
 Where `image_name` should conform to the syntax `my_username/my_tool:version`.
-
+~~~~
+docker build -t stebo85/qmentatest:210713 .
+~~~~
 > The first build may take several minutes since it will need to generate the image layer containing the software installation.
 
 Alternatively, take a look at the `standalone.Dockerfile` to see how to install the SDK in an image based on Ubuntu.

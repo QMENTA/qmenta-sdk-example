@@ -10,7 +10,7 @@
     {
         "type": "container",
         "id": "input",
-        "title": "QSM",
+        "title": "T1 weighted image",
         "file_filter": "c_T1<'T1', [], ''>",
         "in_filter": [
             "mri_brain_data"

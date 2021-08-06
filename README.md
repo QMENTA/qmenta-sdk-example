@@ -45,7 +45,7 @@ Optionally, the `test_tool.py` script can be used to locally launch your tool im
 ~~~~
 mkdir analysis_output
 
-python test_tool.py image_name example_data analysis_output \
+python test_tool.py stebo85/qmentatest:210713 example_data analysis_output \
     --settings settings.json \
     --values mock_settings_values.json
 ~~~~

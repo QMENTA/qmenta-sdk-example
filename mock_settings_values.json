@@ -1,8 +1,8 @@
 {
     "input": [
         {
-            "path": "QSM.zip",
-            "modality": "QSM"
+            "path": "T1.zip",
+            "modality": "T1"
         }
     ],
     "hist_start": 45.0,

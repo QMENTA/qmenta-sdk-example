@@ -19,23 +19,5 @@
         "anchor": 1,
         "mandatory": 1,
         "batch": 1
-    },
-    {
-        "type": "decimal",
-        "title": "From",
-        "id":"hist_start",
-        "mandatory":1,
-        "default":50.0,
-        "min":20.0,
-        "max":200.0
-    },
-    {
-        "type": "decimal",
-        "title": "To",
-        "id":"hist_end",
-        "mandatory":1,
-        "default":400.0,
-        "min":250.0,
-        "max":500.0
     }
 ]

@@ -9,6 +9,8 @@ import pdfkit
 from subprocess import call
 from time import gmtime, strftime
 from tornado import template
+import glob
+
 
 # AnalysisContext documentation: https://docs.qmenta.com/sdk/sdk.html
 def run(context):
@@ -40,6 +42,19 @@ def run(context):
     "/01_bids"
     ])
 
+    context.set_progress(message='Run QSM pipeline ...')
+    call([
+    "python3",
+    "/opt/QSMxT/run_2_qsm.py",
+    "--qsm_iterations",
+    "1000",
+    "--two_pass",
+    "/01_bids", 
+    "/02_qsm_output"
+    ])
+
+    output_file = glob.glob("/02_qsm_output/qsm_final/_run_run-1/*.nii")
+
 
     # Generate an example report
     # Since it is a head-less machine, it requires Xvfb to generate the pdf
@@ -66,3 +81,4 @@ def run(context):
     context.set_progress(message='Uploading results...')
 
     context.upload_file(report_path, 'report.pdf')
+    context.upload_file(output_file[0], 'final.nii')

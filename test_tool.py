@@ -182,21 +182,21 @@ def main():
     # Post executions actions
     yes = {'yes', 'y'}
     no = {'no', 'n'}
-    choice = ''
+    choice = 'yes'
     while choice not in yes and choice not in no:
         print("Do you want to stop the container? (Y/N)")
         choice = input().lower()
     if choice in yes:
         run_command(['docker', 'stop', c_name])
 
-        choice = ''
+        choice = 'no'
         while choice not in yes and choice not in no:
             print("Do you want to delete the container? (Y/N)")
             choice = input().lower()
         if choice in yes:
             run_command(['docker', 'rm', c_name], verbose = True)
     else:
-        choice = ''
+        choice = 'no'
         while choice not in yes and choice not in no:
             print("Do you want to attach to the container? (Y/N)")
             choice = input().lower()

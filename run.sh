@@ -1,3 +1,5 @@
+docker build -t stebo85/qmentatest:210810 -f qsm.Dockerfile .
+
 rm -rf analysis_output
 mkdir analysis_output
 

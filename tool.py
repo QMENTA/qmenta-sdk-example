@@ -20,37 +20,26 @@ def run(context):
     settings = analysis_data['settings']
 
     # Get a T1 image from the input files
-    t1_file_handler = context.get_files('input', modality='T1')[0]
+    t1_file_handler = context.get_files('input', modality='GRE')[0]
     t1_path = t1_file_handler.download('/root/')  # Download and automatically unpack  
 
-    # Compute a basic histogram with MRtrix
-    context.set_progress(message='Processing...')
-
-    histogram_data_path = '/root/hist.txt'
+    context.set_progress(message='Sorting DICOM data...')
     call([
-        "/usr/lib/mrtrix/bin/mrstats", 
-        "-histogram", histogram_data_path,
-        "-bins", "50",
-        t1_path
+    "python3",
+    "/opt/QSMxT/run_0_dicomSort.py",
+    t1_path, 
+    "/00_dicom"
     ])
 
-    # Plot the histogram for the selected range of intensities
-    hist_start = settings['hist_start']
-    hist_end = settings['hist_end']
-    [bins_centers, values] = np.loadtxt(histogram_data_path)
 
-    fig, ax = plt.subplots()
-    ax.set_title('T1 Histogram (for intensities between 50 and 400)')
-    ax.set_ylabel('Number of voxels')
-    ax.grid(color='#CCCCCC', linestyle='--', linewidth=1)
+    context.set_progress(message='Converting DICOM data...')
+    call([
+    "python3",
+    "/opt/QSMxT/run_1_dicomToBids.py",
+    "/00_dicom", 
+    "/01_bids"
+    ])
 
-    left_i = next(i for i,v in enumerate(bins_centers) if v > hist_start)
-    right_i = max((i for i,v in enumerate(bins_centers) if v < hist_end))
-
-    plt.plot(bins_centers[left_i:right_i], values[left_i:right_i])
-
-    hist_path = '/root/hist.png'
-    plt.savefig(hist_path)
 
     # Generate an example report
     # Since it is a head-less machine, it requires Xvfb to generate the pdf
@@ -62,7 +51,6 @@ def run(context):
         'logo_main': '/root/qmenta_logo.png',
         'ss': analysis_data['patient_secret_name'],
         'ssid': analysis_data['ssid'],
-        'histogram': hist_path,
         'this_moment': strftime("%Y-%m-%d %H:%M:%S", gmtime()),
         'version': 1.0
     }
@@ -77,5 +65,4 @@ def run(context):
     # Upload the data and the report
     context.set_progress(message='Uploading results...')
 
-    context.upload_file(histogram_data_path, 'hist_data.txt')
     context.upload_file(report_path, 'report.pdf')

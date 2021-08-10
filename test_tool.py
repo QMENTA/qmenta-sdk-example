@@ -87,7 +87,7 @@ def main():
         choice = ''
         while choice not in yes and choice not in no:
             print("Do you want to continue? (Y/N)")
-            choice = raw_input().lower()
+            choice = input().lower()
         if choice in no:
             sys.exit(1)            
             
@@ -185,21 +185,21 @@ def main():
     choice = ''
     while choice not in yes and choice not in no:
         print("Do you want to stop the container? (Y/N)")
-        choice = raw_input().lower()
+        choice = input().lower()
     if choice in yes:
         run_command(['docker', 'stop', c_name])
 
         choice = ''
         while choice not in yes and choice not in no:
             print("Do you want to delete the container? (Y/N)")
-            choice = raw_input().lower()
+            choice = input().lower()
         if choice in yes:
             run_command(['docker', 'rm', c_name], verbose = True)
     else:
         choice = ''
         while choice not in yes and choice not in no:
             print("Do you want to attach to the container? (Y/N)")
-            choice = raw_input().lower()
+            choice = input().lower()
         if choice in yes:
             run_command(['docker', 'attach', c_name], verbose = True)
 

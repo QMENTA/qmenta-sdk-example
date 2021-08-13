@@ -22,7 +22,7 @@ def run(context):
     settings = analysis_data['settings']
 
     # Get a T1 image from the input files
-    t1_file_handler = context.get_files('input', modality='GRE')[0]
+    t1_file_handler = context.get_files('input')[0]
     t1_path = t1_file_handler.download('/root/')  # Download and automatically unpack  
 
     context.set_progress(message='Sorting DICOM data...')
@@ -42,12 +42,13 @@ def run(context):
     "/01_bids"
     ])
 
+    qsm_iterations = settings['qsm_iterations']
     context.set_progress(message='Run QSM pipeline ...')
     call([
     "python3",
     "/opt/QSMxT/run_2_qsm.py",
     "--qsm_iterations",
-    "1000",
+    str(qsm_iterations),
     "--two_pass",
     "/01_bids", 
     "/02_qsm_output"

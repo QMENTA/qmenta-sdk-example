@@ -2,7 +2,8 @@
     "input": [
         {
             "path": "QSM.zip",
-            "modality": "GRE"
+            "tag": "GRE"
         }
-    ]
+    ],
+    "qsm_iterations": 2
 }

@@ -1,17 +1,17 @@
 [
     {
         "type": "heading",
-        "content": "Range of intensities (histogram)"
+        "content": "QSMxT pipeline"
     },
     {
         "type": "info",
-        "content": "The following values determine the range of intensities for which the histogram has to be computed."
+        "content": "The following values determine the QSMxT parameters."
     },
     {
         "type": "container",
         "id": "input",
-        "title": "T1 weighted image",
-        "file_filter": "c_T1<'T1', [], ''>",
+        "title": "GRE image",
+        "file_filter": "c_GRE<'GRE', [], ''>",
         "in_filter": [
             "mri_brain_data"
         ],
@@ -19,5 +19,14 @@
         "anchor": 1,
         "mandatory": 1,
         "batch": 1
+    },
+    {
+        "type": "decimal",
+        "title": "TGV QSM Iterations",
+        "id":"qsm_iterations",
+        "mandatory":1,
+        "default":1000,
+        "min":1,
+        "max":2000
     }
 ]

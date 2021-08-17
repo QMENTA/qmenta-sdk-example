@@ -182,8 +182,8 @@ def main():
     # Post executions actions
     yes = {'yes', 'y'}
     no = {'no', 'n'}
-    choice = 'yes'
-    # choice = 'no'
+    choice = 'yes' # stop container
+    # choice = 'no' # keep container running and connect for debugging
     while choice not in yes and choice not in no:
         print("Do you want to stop the container? (Y/N)")
         choice = input().lower()

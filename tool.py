@@ -25,6 +25,13 @@ def run(context):
     t1_file_handler = context.get_files('input')[0]
     t1_path = t1_file_handler.download('/root/')  # Download and automatically unpack  
 
+    context.set_progress(message='unpacking sub archives')
+    zip_files = glob.glob("/root/*.zip")
+    context.set_progress(message='found ' + str(len(zip_files)) + ' archives')
+    for file in zip_files:
+        context.set_progress(message='unpacking '+str(file))
+        call(["unzip", file])
+
     context.set_progress(message='Sorting DICOM data...')
     call([
     "python3",

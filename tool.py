@@ -22,11 +22,11 @@ def run(context):
     settings = analysis_data['settings']
 
     # Get a T1 image from the input files
-    t1_file_handler = context.get_files('input')[0]
-    t1_path = t1_file_handler.download('/root/')  # Download and automatically unpack  
+    file_handler = context.get_files('input')[0]
+    path = file_handler.download('/root/')  # Download and automatically unpack  
 
     context.set_progress(message='unpacking sub archives')
-    zip_files = glob.glob("/root/*.zip")
+    zip_files = glob.glob(path+"/*.zip")
     context.set_progress(message='found ' + str(len(zip_files)) + ' archives')
     for file in zip_files:
         context.set_progress(message='unpacking '+str(file))
@@ -36,7 +36,7 @@ def run(context):
     call([
     "python3",
     "/opt/QSMxT/run_0_dicomSort.py",
-    t1_path, 
+    path, 
     "/00_dicom"
     ])
 
